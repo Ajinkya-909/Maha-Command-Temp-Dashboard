@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0b6e7f">
+<title>Konkan Crisis & Social Media Impact Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- Header (Clean, Compact, Non-Intrusive) -->
+<header class="top">
+  <div class="top-content">
+    <div class="badge-row">
+      <span class="region-badge">Konkan Intelligence 2026</span>
+      <span class="coverage-badge">5 Districts • 25 Events</span>
+    </div>
+    <h1>How News & Rumours Travelled in Konkan</h1>
+    <p class="sub">
+      Information speed, reach, public trust, and misinformation dynamics across Twitter/X, Reddit, YouTube, Official Sites & News (March–Sept 2026).
+    </p>
+    <div class="header-actions">
+      <button id="toggleInfoBtn" class="btn-subtle" aria-expanded="false" aria-controls="methodologyBanner">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+        <span>About & Methodology</span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- Collapsible Methodology / About Banner -->
+<div id="methodologyBanner" class="methodology-banner" hidden>
+  <div class="methodology-inner">
+    <div>
+      <h3>About this Research Model</h3>
+      <p>Data aggregates major incident timelines from <strong>News.md</strong> across Thane, Raigad, Palghar, Ratnagiri, and Sindhudurg. Transmission speed, reach, verified trust, and misinformation indices are modelled from incident patterns across social and official channels.</p>
+    </div>
+    <button id="closeInfoBtn" class="btn-icon" aria-label="Close info panel">✕</button>
+  </div>
+</div>
+
+<!-- Controls Bar (Mobile-friendly, doesn't eat screen space) -->
+<div class="controls-wrapper" id="controlsWrap">
+  <nav class="controls" aria-label="Filters and Controls">
+    
+    <!-- 1. District Swipeable Tabs (Always accessible) -->
+    <div class="tabs-container">
+      <div class="tabs-scroll" id="tabsScroll" role="tablist">
+        <div class="tabs" id="tabs"></div>
+      </div>
+    </div>
+
+    <!-- 2. Streamlined Controls Row -->
+    <div class="controls-main-row">
+      
+      <!-- Event Select Picker -->
+      <div class="select-wrapper">
+        <select id="eventSel" aria-label="Select specific incident"></select>
+        <svg class="select-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+
+      <!-- Quick Reset Button (Visible when single event selected) -->
+      <button id="resetEventBtn" class="btn-reset" hidden title="Clear event filter">
+        ✕ Show All
+      </button>
+
+      <!-- Search & Filters Toggle Button on Mobile -->
+      <button id="toggleFiltersBtn" class="btn-filter-toggle" aria-expanded="false">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+        <span>Filters</span>
+      </button>
+
+    </div>
+
+    <!-- 3. Expandable / Collapsible Secondary Filters -->
+    <div class="filters-expandable" id="filtersExpandable">
+      
+      <!-- Event Type Pills -->
+      <div class="type-pills" id="typePills">
+        <button class="pill-btn active" data-type="all">All Types</button>
+        <button class="pill-btn" data-type="sudden">Accidents & Sudden</button>
+        <button class="pill-btn" data-type="disaster">Weather & Floods</button>
+        <button class="pill-btn" data-type="announce">Announcements</button>
+      </div>
+
+      <!-- Search Input -->
+      <div class="search-box">
+        <svg class="search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        <input type="search" id="searchInput" placeholder="Search keywords (e.g. flood, highway, airport)..." aria-label="Search events">
+        <button id="clearSearchBtn" class="clear-input-btn" hidden aria-label="Clear search">✕</button>
+      </div>
+
+    </div>
+
+    <!-- 4. Active Filter Summary Bar -->
+    <div class="active-filter-bar" id="activeFilterBar">
+      <div class="filter-status" id="filterStatusText">Showing all 25 events across Konkan</div>
+      <button id="resetAllFiltersBtn" class="btn-link" hidden>Reset filters</button>
+    </div>
+
+  </nav>
+</div>
+
+<!-- Main Dashboard -->
+<main id="mainContent">
+
+  <!-- KPI Cards (2x2 on Mobile, 4-col on Desktop) -->
+  <section class="kpis-section">
+    <div class="kpis" id="kpis"></div>
+  </section>
+
+  <!-- Executive Insight Alert (Collapsible on Mobile to Save Screen Space) -->
+  <section class="insight-card" id="insightCard">
+    <div class="insight-header" id="insightHeader">
+      <div class="insight-header-left">
+        <span class="insight-badge">Key Takeaway</span>
+        <span class="insight-title" id="insightTitle">Incident Dynamics</span>
+      </div>
+      <button id="toggleInsightBtn" class="insight-toggle-btn" aria-expanded="true">
+        <span id="insightToggleText">Hide</span>
+        <svg id="insightToggleIcon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="18 15 12 9 6 15"/></svg>
+      </button>
+    </div>
+    <div class="insight-content" id="insightContent" aria-live="polite"></div>
+  </section>
+
+  <!-- Visual Analytics Grid -->
+  <section class="analytics-section">
+    <div class="section-header">
+      <h2 class="section-title">Comparative Channel Analytics</h2>
+      <span class="section-subtitle">Evaluating Twitter/X, Reddit, YouTube, Official Channels & News</span>
+    </div>
+
+    <div class="grid">
+      
+      <!-- Speed Chart -->
+      <article class="card">
+        <div class="card-head">
+          <div class="card-title-group">
+            <span class="card-tag">Speed</span>
+            <h2>First Post Response Time</h2>
+          </div>
+          <span class="card-unit">Minutes (Lower is faster)</span>
+        </div>
+        <p class="hint">Minutes elapsed from event until first report. Official warnings show advance alert lead time.</p>
+        <div class="cv"><canvas id="cSpeed"></canvas></div>
+      </article>
+
+      <!-- Reach vs Trust Chart -->
+      <article class="card">
+        <div class="card-head">
+          <div class="card-title-group">
+            <span class="card-tag">Credibility</span>
+            <h2>Reach vs Verified Accuracy</h2>
+          </div>
+          <span class="card-unit">Index (0–100)</span>
+        </div>
+        <p class="hint">Reach (crowd spread) vs Trust (share of claims later confirmed accurate by authorities).</p>
+        <div class="cv cv-rt"><canvas id="cRT"></canvas></div>
+      </article>
+
+      <!-- Phase Curve Chart (Full width) -->
+      <article class="card wide">
+        <div class="card-head">
+          <div class="card-title-group">
+            <span class="card-tag">Trajectory</span>
+            <h2>Activity Curve: Before, Peak & After</h2>
+          </div>
+          <span class="card-unit">Indexed Volume</span>
+        </div>
+        <p class="hint">Posting momentum across lifecycle: Warning/Pre-event, Peak incident crisis, and Aftermath.</p>
+        <div class="cv cv-phase"><canvas id="cPhase"></canvas></div>
+      </article>
+
+      <!-- Public Tone Stacked Bar Chart -->
+      <article class="card">
+        <div class="card-head">
+          <div class="card-title-group">
+            <span class="card-tag">Sentiment</span>
+            <h2>Public Tone & Audience Reaction</h2>
+          </div>
+          <span class="card-unit">Share %</span>
+        </div>
+        <p class="hint">Tone breakdown of posts and comments into Critical/Alarmed, Neutral, and Positive.</p>
+        <div class="cv cv-sent"><canvas id="cSent"></canvas></div>
+      </article>
+
+      <!-- Misinformation Exposure Doughnut Chart -->
+      <article class="card">
+        <div class="card-head">
+          <div class="card-title-group">
+            <span class="card-tag">Integrity</span>
+            <h2>Misinformation Exposure Share</h2>
+          </div>
+          <span class="card-unit">Untrusted Reach %</span>
+        </div>
+        <p class="hint">Distribution of inaccurate impressions across channels (Reach × Untrusted share).</p>
+        <div class="cv cv-mis"><canvas id="cMis"></canvas></div>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- Events Catalog Section -->
+  <section class="card events-card" id="eventsSection">
+    <div class="events-card-head">
+      <div>
+        <div class="card-title-group">
+          <span class="card-tag">Master Catalog</span>
+          <h2>Explore All 25 Regional Incidents</h2>
+        </div>
+        <p class="hint">Tap any incident card or row to isolate its profile across all charts above.</p>
+      </div>
+
+      <div class="events-view-toggle" id="viewToggleGroup">
+        <button class="toggle-btn active" id="btnCardsView">Cards</button>
+        <button class="toggle-btn" id="btnTableView">Table</button>
+      </div>
+    </div>
+
+    <!-- Active event inspection banner -->
+    <div id="inspectBanner" class="inspect-banner" hidden>
+      <div class="inspect-info">
+        <span class="inspect-label">Focused:</span>
+        <strong id="inspectTitle"></strong>
+      </div>
+      <button id="inspectClearBtn" class="btn-pill-action">✕ Show All</button>
+    </div>
+
+    <!-- Touch-friendly Event Cards for Smartphone -->
+    <div class="event-cards-grid" id="eventCards"></div>
+
+    <!-- Desktop Table View -->
+    <div class="table-container" id="eventTableWrap">
+      <table id="tbl">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>District</th>
+            <th>Event Headline</th>
+            <th>Type</th>
+            <th>⚡ Fastest</th>
+            <th>🛡️ Trusted</th>
+            <th>📢 Widest Reach</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+
+    <div id="noEventsMessage" class="no-events-message" hidden>
+      <p>No incidents match the active filters.</p>
+      <button id="clearAllFiltersFromEmpty" class="btn-pill-action">Reset Filters</button>
+    </div>
+  </section>
+
+</main>
+
+<!-- Floating quick jump button for smartphone -->
+<button id="floatingTopBtn" class="floating-btn" aria-label="Jump to charts" title="Jump up to charts">
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="18 15 12 9 6 15"/></svg>
+  <span>Charts</span>
+</button>
+
+<!-- Footer -->
+<footer class="app-footer">
+  <div class="footer-inner">
+    <p><strong>Konkan Crisis & Social Media Impact Dashboard</strong></p>
+    <p class="footer-sub">Sources & Incident Chronology in <code>News.md</code>. Runs completely offline via bundled Chart.js.</p>
+  </div>
+</footer>
+
+<!-- Scripts -->
+<script src="vendor/chart.umd.js"></script>
+<script src="data.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
